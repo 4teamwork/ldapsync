@@ -1,0 +1,34 @@
+source:
+  server: 127.0.0.1
+  port: 389
+  bind_dn: cn=Reader,dc=domain,dc=net
+  bind_password: secret
+  user_base_dn: ou=Users,dc=domain,dc=net
+  user_filter: (&(objectClass=user)(sAMAccountName=*)(mail=*))
+  use_ssl: false
+
+target:
+  server: 127.0.0.1
+  port: 10389
+  bind_dn: cn=Manager,dc=directory,dc=com
+  bind_password: supersecret
+  user_base_dn: ou=Users,dc=directory,dc=com
+  user_filter: (objectClass=person)
+  use_ssl: false
+
+attribute_mapping:
+  sAMAccountName: uid
+  sn: sn
+  givenName: givenName
+  mail: mail
+  cn: cn
+  displayName: displayName
+
+user_objectclass:
+  - inetOrgPerson
+  - inetUser
+  - organizationalPerson
+  - person
+  - top
+
+user_rdn: uid

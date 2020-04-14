@@ -1,0 +1,16 @@
+attribute_mapping:
+  sAMAccountName: uid
+  sn: sn
+  givenName: givenName
+  mail: mail
+  cn: cn
+  displayName: displayName
+
+user_objectclass:
+  - inetOrgPerson
+  - inetUser
+  - organizationalPerson
+  - person
+  - top
+
+user_rdn: uid
