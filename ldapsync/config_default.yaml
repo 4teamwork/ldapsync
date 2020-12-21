@@ -1,10 +1,10 @@
 attribute_mapping:
-  sAMAccountName: uid
-  sn: sn
-  givenName: givenName
-  mail: mail
   cn: cn
   displayName: displayName
+  givenName: givenName
+  mail: mail
+  sn: sn
+  uid: sAMAccountName
 
 user_objectclass:
   - inetOrgPerson

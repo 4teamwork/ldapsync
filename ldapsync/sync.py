@@ -38,7 +38,6 @@ def sync(options):
     src_options = options['source'].get()
     tgt_options = options['target'].get()
     attribute_mapping = options['attribute_mapping'].get()
-    reverse_attribute_mapping = {v: k for k, v in attribute_mapping.items()}
     user_rdn = options['user_rdn'].get()
 
     src_server = Server(
@@ -60,7 +59,7 @@ def sync(options):
         src_options['bind_password'],
         src_options['user_base_dn'],
         src_options['user_filter'],
-        list(attribute_mapping.keys()),
+        list(set(attribute_mapping.values())),
     )
     tgt_entries = fetch_users(
         tgt_server,
@@ -68,13 +67,13 @@ def sync(options):
         tgt_options['bind_password'],
         tgt_options['user_base_dn'],
         tgt_options['user_filter'],
-        list(attribute_mapping.values()),
+        list(attribute_mapping.keys()),
     )
 
     # Attributes may be single valued on one server and multi valued on the
     # other server. In this case we ensure single values on both sides.
     single_valued_attributes = set()
-    for src_attr, tgt_attr in attribute_mapping.items():
+    for tgt_attr, src_attr in attribute_mapping.items():
         if (
             src_server.schema.attribute_types[src_attr].single_value
             or tgt_server.schema.attribute_types[tgt_attr].single_value
@@ -84,12 +83,12 @@ def sync(options):
 
     src_items = {
         ensure_single_valued(
-            entry["attributes"][reverse_attribute_mapping[user_rdn]]
+            entry["attributes"][attribute_mapping[user_rdn]]
         ): {
-            attribute_mapping[key]: ensure_single_valued(value)
+            key: ensure_single_valued(entry["attributes"][attribute_mapping[key]])
             if key in single_valued_attributes
-            else value
-            for key, value in entry["attributes"].items()
+            else entry["attributes"][attribute_mapping[key]]
+            for key in attribute_mapping.keys()
         }
         for entry in src_entries
     }
